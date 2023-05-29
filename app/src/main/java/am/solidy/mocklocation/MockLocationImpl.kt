@@ -62,7 +62,7 @@ class MockLocationImpl internal constructor(context: Context) {
                 accuracy
             )
         } catch (ignored: java.lang.IllegalArgumentException) {
-
+            //TODO: error handling
         }
 
         val newLocation = Location(provider).also {
@@ -84,10 +84,12 @@ class MockLocationImpl internal constructor(context: Context) {
         try {
             mLocationManager.setTestProviderEnabled(provider, true)
         } catch (ignored: java.lang.IllegalArgumentException) {
+            //TODO: error handling
         }
         try {
             mLocationManager.setTestProviderLocation(provider, newLocation)
         } catch (ignored: java.lang.IllegalArgumentException) {
+            //TODO: error handling
         }
     }
 }
