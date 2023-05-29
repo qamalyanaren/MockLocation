@@ -47,10 +47,8 @@ class MainActivity : AppCompatActivity() {
 
         binding.tieLogin.doAfterTextChanged { viewModel.setParam1(it.toString()) }
         binding.tiePassword.doAfterTextChanged { viewModel.setParam2(it.toString()) }
-    }
 
-    override fun onResume() {
-        super.onResume()
+
         ActivityCompat.requestPermissions(
             this, arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,

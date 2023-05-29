@@ -32,11 +32,11 @@
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/tieLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:imeOptions="actionNext"
+            android:maxLines="1"
             android:inputType="text"
-            android:maxLines="1" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -51,10 +51,10 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/tiePassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:imeOptions="actionDone"
+            android:maxLines="1"
             android:inputType="text"
-            android:maxLines="1" />
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
