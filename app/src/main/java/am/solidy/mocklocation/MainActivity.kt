@@ -1,6 +1,7 @@
 package am.solidy.mocklocation
 
 
+import am.solidy.mocklocation.databinding.ActivityMainBinding
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AppOpsManager
@@ -10,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Process
 import android.provider.Settings
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -29,15 +28,13 @@ import kotlinx.coroutines.flow.onEach
 class MainActivity : AppCompatActivity() {
 
     private var mockLocationProvider: MockLocationImpl? = null
-    private lateinit var tvMockInfo: TextView
-
     private val viewModel by viewModels<MainViewModel>()
 
-
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        tvMockInfo = findViewById(R.id.tvFakeInfo)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         ActivityCompat.requestPermissions(
             this, arrayOf(
@@ -45,6 +42,15 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ), PERMISSION_REQUEST_CODE
         )
+
+        binding.btnRetry.setOnClickListener {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), PERMISSION_REQUEST_CODE
+            )
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -64,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == PERMISSION_REQUEST_CODE && permissionLocation) {
             initMockLocation()
         } else {
-            tvMockInfo.text = "Չհաջողվեց ձեր կորդինատները փոխարինել"
+            binding.tvFakeInfo.text = "Չհաջողվեց ձեր կորդինատները փոխարինել"
         }
     }
 
@@ -79,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 "Please enable developer mode",
                 Toast.LENGTH_LONG
             ).show()
-            tvMockInfo.text = "Չհաջողվեց ձեր կորդինատները փոխարինել"
+            binding.tvFakeInfo.text = "Չհաջողվեց ձեր կորդինատները փոխարինել"
             return
         }
         if (!isMockLocationEnabled()) {
@@ -89,19 +95,23 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
             startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
-            tvMockInfo.text = "Չհաջողվեց ձեր կորդինատները փոխարինել"
+            binding.tvFakeInfo.text = "Չհաջողվեց ձեր կորդինատները փոխարինել"
             return
         }
+        viewModel.getMockLocation()
 
         viewModel.mockLocation.flowWithLifecycle(lifecycle)
-            .onEach {
-                mockLocationProvider = MockLocationImpl(this)
-                mockLocationProvider?.startMockLocationUpdates(
-                    latitude = MOCK_LOCATION_LATITUDE,
-                    longitude = MOCK_LOCATION_LONGITUDE
-                )
+            .onEach { location ->
+                location?.let {
+                    mockLocationProvider = MockLocationImpl(this)
+                    mockLocationProvider?.startMockLocationUpdates(
+                        latitude = MOCK_LOCATION_LATITUDE,
+                        longitude = MOCK_LOCATION_LONGITUDE
+                    )
 
-                tvMockInfo.text = "Ձեր կորդինատները հաջողությամբ փոխարինվեց (Վարդաբլուր, Լոռի)"
+//                    binding.tvFakeInfo.text = location.title
+                    binding.tvFakeInfo.text = "Ձեր կորդինատները հաջողությամբ փոխարինվեց (Վարդաբլուր, Լոռի)"
+                }
 
             }.launchIn(lifecycleScope)
     }

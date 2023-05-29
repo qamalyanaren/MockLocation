@@ -7,8 +7,9 @@ import io.ktor.client.request.url
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlin.random.Random
 
-private const val MOCK_LOCATION_URL = "https://jsonplaceholder.typicode.com/todos/1"
+private const val MOCK_LOCATION_URL = "https://jsonplaceholder.typicode.com/todos/"
 
 interface MockLocationRepository {
     fun fetchMockLocation(): Flow<MockLocation>
@@ -19,7 +20,7 @@ class MockLocationRepositoryImpl @Inject constructor(
 ) : MockLocationRepository {
     override fun fetchMockLocation() = flow {
         val response = httpClient.get<MockLocation> {
-            url(MOCK_LOCATION_URL)
+            url(MOCK_LOCATION_URL + "${Random.nextInt(1, 100)}")
         }
         emit(response)
     }

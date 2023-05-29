@@ -21,6 +21,10 @@ class MainViewModel @Inject constructor(
     val mockLocation = _mockLocation.asStateFlow()
 
     init {
+        getMockLocation()
+    }
+
+    fun getMockLocation() {
         repository.fetchMockLocation()
             .onEach {
                 _mockLocation.value = it
