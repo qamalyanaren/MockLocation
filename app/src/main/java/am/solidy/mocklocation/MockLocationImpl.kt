@@ -40,13 +40,17 @@ class MockLocationImpl internal constructor(context: Context) {
     @SuppressLint("WrongConstant")
     private fun setMock(provider: String, latitude: Double, longitude: Double) {
 
-        val powerUsage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ProviderProperties.POWER_USAGE_LOW
-        } else 0
+        val powerUsage = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> ProviderProperties.POWER_USAGE_LOW
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.R -> 1
+            else -> 0
+        }
 
-        val accuracy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ProviderProperties.ACCURACY_FINE
-        } else 5
+        val accuracy = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> ProviderProperties.ACCURACY_FINE
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.R -> 1
+            else -> 5
+        }
 
         try {
             mLocationManager.addTestProvider(
