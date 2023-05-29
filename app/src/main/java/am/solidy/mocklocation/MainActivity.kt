@@ -12,17 +12,27 @@ import android.os.Process
 import android.provider.Settings
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 
 //TODO: just for testing
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var mockLocationProvider: MockLocationImpl? = null
     private lateinit var tvMockInfo: TextView
+
+    private val viewModel by viewModels<MainViewModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,13 +93,17 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        mockLocationProvider = MockLocationImpl(this)
-        mockLocationProvider?.startMockLocationUpdates(
-            latitude = MOCK_LOCATION_LATITUDE,
-            longitude = MOCK_LOCATION_LONGITUDE
-        )
+        viewModel.mockLocation.flowWithLifecycle(lifecycle)
+            .onEach {
+                mockLocationProvider = MockLocationImpl(this)
+                mockLocationProvider?.startMockLocationUpdates(
+                    latitude = MOCK_LOCATION_LATITUDE,
+                    longitude = MOCK_LOCATION_LONGITUDE
+                )
 
-        tvMockInfo.text = "Ձեր կորդինատները հաջողությամբ փոխարինվեց (Վարդաբլուր, Լոռի)"
+                tvMockInfo.text = "Ձեր կորդինատները հաջողությամբ փոխարինվեց (Վարդաբլուր, Լոռի)"
+
+            }.launchIn(lifecycleScope)
     }
 
     override fun onDestroy() {
