@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="16dp"
         android:layout_height="wrap_content"
-        android:hint="Write &#34;param1&#34; here"
+        android:hint="Login"
         app:endIconMode="clear_text">
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Write &#34;param2&#34; here"
+        android:hint="Password"
         app:endIconMode="clear_text">
 
         <androidx.appcompat.widget.AppCompatEditText
